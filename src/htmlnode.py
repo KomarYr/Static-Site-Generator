@@ -1,15 +1,14 @@
 
 
 
-valid = str | None
-
 class HTMLNode:
     def __init__(
             self, 
             tag: str | None = None, 
             value: str | None = None, 
-            chlidren: list["HTMLNode"] | None = None,
-            props: dict = None):
+            children: list | None = None,
+            props: dict | None = None
+        ):
         self.tag = tag
         self.value = value
         self.children = children
