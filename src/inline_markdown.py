@@ -71,11 +71,14 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         if old_node.text_type is not TextType.TEXT:
             new_nodes.append(old_node)
             continue
-        split_nodes = []
+        
         original_text = old_node.text
         extracted_links = extract_markdown_links(original_text)
+        
+        split_nodes = []
         if not extracted_links:
-            return old_nodes
+            new_nodes.append(old_node)
+            continue
         for link_alt, link in extracted_links:
             sections = original_text.split(f"[{link_alt}]({link})", 1)
             if len(sections) != 2:
@@ -91,20 +94,21 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     return new_nodes
 
 
+def text_to_textnodes(text: str) -> list[TextNode]:
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
+
+
+
+
 
 
 
 if __name__ == "__main__":
-    node = TextNode(
-        "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev) and after all add same text.",
-        TextType.TEXT,
-    )
-
-    new_nodes = split_nodes_link([node])
-    print(new_nodes)
-
-
-
-
-
-           
+    text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+    print(text_to_textnodes(text))
