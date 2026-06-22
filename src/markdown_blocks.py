@@ -50,6 +50,7 @@ def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     for block in blocks:
         html_node = block_to_html_node(block)
+        #print(f"Created html node: {html_node}")
         block_nodes.append(html_node)
     return ParentNode("div", block_nodes, None)
 
@@ -77,6 +78,7 @@ def text_to_children(text: str) -> list[HTMLNode]:
     html_nodes = []
     text_nodes = text_to_textnodes(text)
     for text_node in text_nodes:
+        #print(f"Before text node to html node: {text_node}")
         html_node = text_node_to_html_node(text_node)
         html_nodes.append(html_node)
     return html_nodes

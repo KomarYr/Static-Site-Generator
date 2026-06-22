@@ -6,7 +6,8 @@ import shutil
 
 def copy_content(src: str, dst: str, cleaned: bool = False) -> None:
     if not cleaned:
-        shutil.rmtree(dst)
+        if os.path.exists(dst): # for first time 
+            shutil.rmtree(dst)
         cleaned = True
     if not os.path.exists(dst):
         os.mkdir(dst)
