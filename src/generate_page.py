@@ -40,10 +40,10 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
     
     with open(template_path) as file:
         template = file.read()
-    template.replace("{{ Title }}", title)
-    template.replace("{{ Content }}", content)
-    template.replace('href="/', f'href="{dest_path}')
-    template.replace('srs="/', f'srs="{dest_path}')
+    template = template.replace("{{ Title }}", title)
+    template = template.replace("{{ Content }}", content)
+    template = template.replace('href="/', f'href="{dest_path}')
+    template = template.replace('srs="/', f'srs="{dest_path}')
 
     if not os.path.dirname(dest_path):
         os.makedirs(dest_path, exist_ok=True)
