@@ -1,5 +1,6 @@
 import sys
 import os
+import shutil
 from textnode import TextNode, TextType
 from copy_content import copy_content
 from generate_page import generate_page_recursive
