@@ -3,21 +3,25 @@ from pathlib import Path
 from markdown_blocks import markdown_to_html_node
 
 
-
-def generate_page_recursive(dir_path_content: str, template_path: str, dest_dir_path: str) -> None:
+def generate_page_recursive(dir_path_content: str, template_path: str, dest_dir_path: str, basepath: str) -> None:
     src = Path(dir_path_content)
     dst = Path(dest_dir_path)
-    print(f"sourse: {src}, destination: {dst}")
+    #print(f"sourse: {src}, destination: {dst}")
     if not src.exists():
         raise ValueError(f"{dir_path_content} is not exists")
     for item in os.listdir(src):
         current_path = src / item   # forward slash is like join
         if current_path.is_file():
             dst.mkdir(parents=True, exist_ok=True)
-            generate_page(current_path, template_path, (dst / item).with_suffix(".html"))
-            continue
-        new_dst = dst / item
-        generate_page_recursive(current_path, template_path, new_dst)
+            generate_page(
+                    current_path, 
+                    template_path, 
+                    (dst / item).with_suffix(".html"),
+                    basepath
+            )
+        else:
+            new_dst = dst / item
+            generate_page_recursive(current_path, template_path, new_dst, basepath)
 
 
 
@@ -30,7 +34,7 @@ def extract_title(markdown: str) -> str:
 
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str):
+def generate_page(from_path: str, template_path: str, dest_path: str, basepath: str):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path) as file:
         md = file.read()
@@ -42,11 +46,9 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
         template = file.read()
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", content)
-    template = template.replace('href="/', f'href="{dest_path}')
-    template = template.replace('srs="/', f'srs="{dest_path}')
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
 
-    if not os.path.dirname(dest_path):
-        os.makedirs(dest_path, exist_ok=True)
     with open(dest_path, "w") as dst:
         dst.write(template)
 
