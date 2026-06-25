@@ -14,7 +14,7 @@ def generate_page_recursive(dir_path_content: str, template_path: str, dest_dir_
         current_path = src / item   # forward slash is like join
         if current_path.is_file():
             dst.mkdir(parents=True, exist_ok=True)
-            generate_page(current_path, template_path, (dst / item).with_suffix(".html")
+            generate_page(current_path, template_path, (dst / item).with_suffix(".html"))
             continue
         new_dst = dst / item
         generate_page_recursive(current_path, template_path, new_dst)
@@ -37,23 +37,18 @@ def generate_page(from_path: str, template_path: str, dest_path: str):
     node = markdown_to_html_node(md)
     content = node.to_html()
     title = extract_title(md)
+    
     with open(template_path) as file:
         template = file.read()
-    lines = template.split("\n")
-    new_page = ""
-    title_placeholder = "{{ Title }}"
-    content_placeholder = "{{ Content }}"
-    for line in lines:
-        if title_placeholder in line:
-            line = line.replace("{{ Title }}", title)
-        if content_placeholder in line:
-            line = line.replace("{{ Content }}", content)
-        new_page += line
-    #print(new_page)
-    #if not os.path.dirname(dest_path):
-        #os.mkdir(dest_path)
+    template.replace("{{ Title }}", title)
+    template.replace("{{ Content }}", content)
+    template.replace('href="/', f'href="{dest_path}')
+    template.replace('srs="/', f'srs="{dest_path}')
+
+    if not os.path.dirname(dest_path):
+        os.makedirs(dest_path, exist_ok=True)
     with open(dest_path, "w") as dst:
-        dst.write(new_page)
+        dst.write(template)
 
 
 
